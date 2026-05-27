@@ -1,0 +1,6 @@
+{
+  "name": "grandma3",
+  "version": "1.0.0",
+  "words": ["Cmd", "Printf", "MAHandle"],
+  "files": ["*.lua"]
+}
