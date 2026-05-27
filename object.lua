@@ -1,359 +1,642 @@
 ---@meta
 
---- The Addr Lua object function converts a handle to an address string that can be used in commands.
---- # Arguments
---- **Handle:**
----     The function takes a handle of the type "light_userdata" as an argument. This is the handle to the object where the address is requested.
----     It can be omitted when using the colon notation on an object.
---- **baseHandle**
----     The returned address is from the root as a default. This optional handle can specify a different base location. It must still be a base location in the address path from the root to the object.
---- **useToAddrIndex**
----     This can be useful if there is a difference between the ==ToAddr()== and ==Addr()==. Setting this to "true" uses the index number from the ToAddr() instead of the Addr() index number.
---- **fixResolution**
----      In some edge cases, the cue address is not resolved correctly. Setting this boolean to true will fix this.
+---@class MAHandle
+local MAHandle = {}
+
+-- grandMA3 Object Lua API
+-- Generated from grandMA3 User Manual v2.3
+-- All functions exist in two forms:
+--   object:Method()       -- colon notation, handle is implicit self
+--   Method(handle, ...)   -- standard notation, handle passed explicitly
+
+--------------------------------------------------------------------------------
+-- Addr
+--------------------------------------------------------------------------------
+
+--- Converts a handle to a numbered dot-notation address string for use in commands.
+--- The address is in parent-child number format e.g. "1.2.3".
 ---
---- # Return
---- **String:**
----      Text string with the address in a parent-child number format separated by dots.
----
---- # Example
----     This example prints different versions of the address to a cue in a sequence.
----
+--- Example:
 --- ```lua
---- return function()
----     -- Creates a cue in sequence 1
----     Cmd("Store Sequence 1 Cue 100 /Merge /NoConfirmation")
----     --Store a handle to the created cue
----     local cueObject = ObjectList("Sequence 1 Cue 100")[1]
----     --Print different version of the handle address
----     Printf("ToAddr:              " .. cueObject:ToAddr())
----     Printf("Addr:                " .. cueObject:Addr())
----     Printf("Addr(Parent, false, false): " .. cueObject:Addr(cueObject:Parent(), false, false))
----     Printf("Addr(Parent, true, false):  " .. cueObject:Addr(cueObject:Parent(), true, false))
----     Printf("Addr(Parent, false, true): " .. cueObject:Addr(cueObject:Parent(), false, true))
----     Printf("Addr(Parent, true, true):  " .. cueObject:Addr(cueObject:Parent(), true, true))
---- end
+--- local cueObject = ObjectList("Sequence 1 Cue 100")[1]
+--- Printf("Addr: " .. cueObject:Addr())
+--- Printf("Addr(Parent, false, false): " .. cueObject:Addr(cueObject:Parent(), false, false))
+--- Printf("Addr(Parent, true, false): "  .. cueObject:Addr(cueObject:Parent(), true, false))
+--- Printf("Addr(Parent, false, true): "  .. cueObject:Addr(cueObject:Parent(), false, true))
+--- Printf("Addr(Parent, true, true): "   .. cueObject:Addr(cueObject:Parent(), true, true))
 --- ```
----
----@param baseHandle? MAHandle
----@param useToAddrIndex? boolean
----@param fixResolution? boolean
----@return string
+---@param baseHandle? MAHandle Optional base location handle. Defaults to root.
+---@param useToAddrIndex? boolean If true, uses the index number from ToAddr() instead of Addr()
+---@param fixResolution? boolean If true, fixes edge cases where cue address resolves incorrectly
+---@return string address Address string in parent-child dot notation
 function MAHandle:Addr(baseHandle, useToAddrIndex, fixResolution) end
 
---- The Addr Lua object function converts a handle to an address string that can be used in commands.
---- # Arguments
---- **Handle:**
----     The function takes a handle of the type "light_userdata" as an argument. This is the handle to the object where the address is requested.
----     It can be omitted when using the colon notation on an object.
---- **baseHandle**
----     The returned address is from the root as a default. This optional handle can specify a different base location. It must still be a base location in the address path from the root to the object.
---- **useToAddrIndex**
----     This can be useful if there is a difference between the ==ToAddr()== and ==Addr()==. Setting this to "true" uses the index number from the ToAddr() instead of the Addr() index number.
---- **fixResolution**
----      In some edge cases, the cue address is not resolved correctly. Setting this boolean to true will fix this.
+--- Converts a handle to a numbered dot-notation address string for use in commands.
+--- The address is in parent-child number format e.g. "1.2.3".
 ---
---- # Return
---- **String:**
----      Text string with the address in a parent-child number format separated by dots.
----
---- # Example
----     This example prints different versions of the address to a cue in a sequence.
----
+--- Example:
 --- ```lua
---- return function()
----     -- Creates a cue in sequence 1
----     Cmd("Store Sequence 1 Cue 100 /Merge /NoConfirmation")
----     --Store a handle to the created cue
----     local cueObject = ObjectList("Sequence 1 Cue 100")[1]
----     --Print different version of the handle address
----     Printf("ToAddr:              " .. cueObject:ToAddr())
----     Printf("Addr:                " .. cueObject:Addr())
----     Printf("Addr(Parent, false, false): " .. cueObject:Addr(cueObject:Parent(), false, false))
----     Printf("Addr(Parent, true, false):  " .. cueObject:Addr(cueObject:Parent(), true, false))
----     Printf("Addr(Parent, false, true): " .. cueObject:Addr(cueObject:Parent(), false, true))
----     Printf("Addr(Parent, true, true):  " .. cueObject:Addr(cueObject:Parent(), true, true))
---- end
+--- local cueObject = ObjectList("Sequence 1 Cue 100")[1]
+--- Printf("Addr: " .. Addr(cueObject))
+--- Printf("Addr(Parent): " .. Addr(cueObject, cueObject:Parent(), false, false))
 --- ```
----
----@param handle MAHandle
----@param baseHandle? MAHandle
----@param useToAddrIndex? boolean
----@param fixResolution? boolean
----@return string
+---@param handle MAHandle The handle to convert
+---@param baseHandle? MAHandle Optional base location handle. Defaults to root.
+---@param useToAddrIndex? boolean If true, uses the index number from ToAddr() instead of Addr()
+---@param fixResolution? boolean If true, fixes edge cases where cue address resolves incorrectly
+---@return string address Address string in parent-child dot notation
 function Addr(handle, baseHandle, useToAddrIndex, fixResolution) end
 
---- The AddrNative Lua object function converts a handle to an address string that can be used in commands.
---- # Arguments
---- **Handle:**
----     The function takes a handle as an argument. This is the handle to the object where the address is requested.
----     It can be omitted when using the colon notation on an object.
---- **baseHandle**
----     The returned address is from the root as a default. This optional handle can specify a different base location. It still needs to be a base location in the address path from the root to the object.
---- **withQuotes**
----     Set this to "true" to get the returned names in quotation marks.
----
---- # Return
---- **String:**
----      Text string with the address in a parent-child name format separated by dots.
----
---- # Example
----      This example prints the address of the first sequence:
---- ```lua
---- return function()
----     -- Stores the handle to the first sequence.
----     local mySequence = DataPool().Sequences[1]
----     -- Print the native address.
----     Printf("The full address is: " .. mySequence:AddrNative())
----     -- Stores a handle to the default DataPool.
----     local myDataPool = DataPool()
----     -- Print the native address to the datapool using the default datapool as a base.
----     Printf("The address in the datapool is: " .. mySequence:AddrNative(myDataPool))
----     -- Print the native address to the datapool, using the default datapool as a base, with names as strings.
----     Printf("The address in the datapool with quotes around the names is: " .. mySequence:AddrNative(myDataPool, true))
---- end
---- ```
----@param handle MAHandle
----@param baseHandle? MAHandle
----@param withQuotes? boolean
----@return string
-function MAHandle:AddrNative(handle, baseHandle, withQuotes) end
+--------------------------------------------------------------------------------
+-- AddrNative
+--------------------------------------------------------------------------------
 
---- The AddrNative Lua object function converts a handle to an address string that can be used in commands.
---- # Arguments
---- **Handle:**
----     The function takes a handle as an argument. This is the handle to the object where the address is requested.
----     It can be omitted when using the colon notation on an object.
---- **baseHandle**
----     The returned address is from the root as a default. This optional handle can specify a different base location. It still needs to be a base location in the address path from the root to the object.
---- **withQuotes**
----     Set this to "true" to get the returned names in quotation marks.
+--- Converts a handle to a named dot-notation address string for use in commands.
+--- Returns names rather than index numbers, optionally wrapped in quotation marks.
 ---
---- # Return
---- **String:**
----      Text string with the address in a parent-child name format separated by dots.
----
---- # Example
----      This example prints the address of the first sequence:
+--- Example:
 --- ```lua
---- return function()
----     -- Stores the handle to the first sequence.
----     local mySequence = DataPool().Sequences[1]
----     -- Print the native address.
----     Printf("The full address is: " .. mySequence:AddrNative())
----     -- Stores a handle to the default DataPool.
----     local myDataPool = DataPool()
----     -- Print the native address to the datapool using the default datapool as a base.
----     Printf("The address in the datapool is: " .. mySequence:AddrNative(myDataPool))
----     -- Print the native address to the datapool, using the default datapool as a base, with names as strings.
----     Printf("The address in the datapool with quotes around the names is: " .. mySequence:AddrNative(myDataPool, true))
---- end
+--- local mySequence = DataPool().Sequences[1]
+--- Printf("Full address: " .. mySequence:AddrNative())
+--- local myDataPool = DataPool()
+--- Printf("DataPool address: " .. mySequence:AddrNative(myDataPool))
+--- Printf("With quotes: " .. mySequence:AddrNative(myDataPool, true))
 --- ```
----@param baseHandle? MAHandle
----@param withQuotes? boolean
----@return string
-function AddrNative(baseHandle, withQuotes) end
+---@param baseHandle? MAHandle Optional base location handle. Defaults to root.
+---@param withQuotes? boolean If true, wraps each name segment in quotation marks
+---@return string address Address string in parent-child name format separated by dots
+function MAHandle:AddrNative(baseHandle, withQuotes) end
 
---- The ==Children== Lua function creates a table of handles for the children of an object
+--- Converts a handle to a named dot-notation address string for use in commands.
+--- Returns names rather than index numbers, optionally wrapped in quotation marks.
 ---
---- # Arguments
---- **Handle:**
----     The function takes a handle of the type =="light_userdata"== as an argument.
----     It can be omitted when using colon notiation on an object.
----
---- # Return
---- **Table:**
----     The function returns a table with handles for the child objects. If there are no children, then it returns an empty table.
----
---- # Example
---- This example returns the name of the cues in the first sequenve of the selected data pool:
+--- Example:
+--- ```lua
+--- local mySequence = DataPool().Sequences[1]
+--- Printf("Full address: " .. AddrNative(mySequence))
 --- ```
---- return function()
----     -- Stores the handle for sequence 1 in a variable.
----     local mySequence = DataPool().Sequences[1]
----     if mySequence ~= nil then
----             -- Use the "Children()" funciton to store a table with all the children in a new variable.
----         local cues = mySequence:Children()
----         -- For loop that uses the length operator on the cue variable.
----         for i = 1, #cues do
----             -- Text is printed for each child.
----             Printf("Sequence 1 Child " .. i .. " = " .. cues[i].name)
----         end
----     else
----         ErrPrintf("Sequence could not be found.")
+---@param handle MAHandle The handle to convert
+---@param baseHandle? MAHandle Optional base location handle. Defaults to root.
+---@param withQuotes? boolean If true, wraps each name segment in quotation marks
+---@return string address Address string in parent-child name format separated by dots
+function AddrNative(handle, baseHandle, withQuotes) end
+
+--------------------------------------------------------------------------------
+-- Children
+--------------------------------------------------------------------------------
+
+--- Returns a table of handles for all child objects of this object.
+--- Returns an empty table if the object has no children.
+---
+--- Example:
+--- ```lua
+--- local mySequence = DataPool().Sequences[1]
+--- if mySequence ~= nil then
+---     local cues = mySequence:Children()
+---     for i = 1, #cues do
+---         Printf("Child " .. i .. " = " .. cues[i].Name)
 ---     end
 --- end
 --- ```
----@param handle MAHandle
----@return {}
+---@return MAHandle[] children Table of child object handles, empty if no children
+function MAHandle:Children() end
+
+--- Returns a table of handles for all child objects of the given handle.
+--- Returns an empty table if the object has no children.
+---
+--- Example:
+--- ```lua
+--- local cues = Children(DataPool().Sequences[1])
+--- for i = 1, #cues do Printf(cues[i].Name) end
+--- ```
+---@param handle MAHandle The parent object handle
+---@return MAHandle[] children Table of child object handles, empty if no children
 function Children(handle) end
 
---- The ==Children== Lua function creates a table of handles for the children of an object
+--------------------------------------------------------------------------------
+-- Count
+--------------------------------------------------------------------------------
+
+--- Returns the number of child objects this object has.
 ---
---- # Arguments
---- **Handle:**
----     The function takes a handle of the type =="light_userdata"== as an argument.
----     It can be omitted when using colon notiation on an object.
----
---- # Return
---- **Table:**
----     The function returns a table with handles for the child objects. If there are no children, then it returns an empty table.
----
---- # Example
---- This example returns the name of the cues in the first sequenve of the selected data pool:
+--- Example:
+--- ```lua
+--- local cueCount = SelectedSequence():Count()
+--- Printf("The selected sequence has " .. cueCount .. " cues.")
 --- ```
---- return function()
----     -- Stores the handle for sequence 1 in a variable.
----     local mySequence = DataPool().Sequences[1]
----     if mySequence ~= nil then
----             -- Use the "Children()" funciton to store a table with all the children in a new variable.
----         local cues = mySequence:Children()
----         -- For loop that uses the length operator on the cue variable.
----         for i = 1, #cues do
----             -- Text is printed for each child.
----             Printf("Sequence 1 Child " .. i .. " = " .. cues[i].name)
----         end
----     else
----         ErrPrintf("Sequence could not be found.")
+---@return integer count Number of child objects
+function MAHandle:Count() end
+
+--- Returns the number of child objects the given handle has.
+---
+--- Example:
+--- ```lua
+--- local count = Count(SelectedSequence())
+--- Printf("Cue count: " .. count)
+--- ```
+---@param handle MAHandle The object handle
+---@return integer count Number of child objects
+function Count(handle) end
+
+--------------------------------------------------------------------------------
+-- Dump
+--------------------------------------------------------------------------------
+
+--- Prints detailed information about this object to the Command Line History.
+--- Output includes the object's name, class, path, properties, and children.
+--- Useful for exploring unfamiliar objects.
+---
+--- Example:
+--- ```lua
+--- Printf("======= START =======")
+--- SelectedSequence():Dump()
+--- Printf("======== END ========")
+--- ```
+---@return nil
+function MAHandle:Dump() end
+
+--- Prints detailed information about the given handle to the Command Line History.
+--- Output includes the object's name, class, path, properties, and children.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- Printf("======= START =======")
+--- Dump(seq)
+--- Printf("======== END ========")
+--- ```
+---@param handle MAHandle The object handle to dump
+---@return nil
+function Dump(handle) end
+
+--------------------------------------------------------------------------------
+-- Export
+--------------------------------------------------------------------------------
+
+--- Exports this object to an XML file at the specified path.
+--- Use GetPath() to get valid grandMA3 folder paths.
+--- Correlates with the Import() object function.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- if seq then
+---     local path = GetPath(Enums.PathType.UserSequences)
+---     local success = seq:Export(path, "mySequence.xml")
+---     if success then Printf("Exported to: " .. path) end
+--- end
+--- ```
+---@param path string File system path to the destination folder
+---@param fileName string Name of the file to create including extension e.g. "mySequence.xml"
+---@return boolean success True if the export succeeded
+function MAHandle:Export(path, fileName) end
+
+--- Exports the given handle's object to an XML file at the specified path.
+--- Correlates with the Import() object function.
+---
+--- Example:
+--- ```lua
+--- local success = Export(SelectedSequence(), GetPath(Enums.PathType.UserSequences), "seq.xml")
+--- ```
+---@param handle MAHandle The object to export
+---@param path string File system path to the destination folder
+---@param fileName string Name of the file to create including extension
+---@return boolean success True if the export succeeded
+function Export(handle, path, fileName) end
+
+--------------------------------------------------------------------------------
+-- Get
+--------------------------------------------------------------------------------
+
+--- Returns the value of a named property on this object.
+--- Boolean properties return "0" or "1" by default. Supply a role integer to get "No"/"Yes" instead.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- local tracking = seq:Get("Tracking")             -- returns "0" or "1"
+--- local trackingStr = seq:Get("Tracking", Enums.Roles.Edit)  -- returns "No" or "Yes"
+--- Printf("Tracking: " .. trackingStr)
+--- ```
+---@param propertyName string Name of a valid property on this object
+---@param roleInt? integer Optional role integer. When supplied, booleans return as "No"/"Yes"
+---@return string value The property value as a string
+function MAHandle:Get(propertyName, roleInt) end
+
+--- Returns the value of a named property on the given handle's object.
+--- Boolean properties return "0" or "1" by default. Supply a role integer to get "No"/"Yes" instead.
+---
+--- Example:
+--- ```lua
+--- local val = Get(SelectedSequence(), "Tracking", Enums.Roles.Edit)
+--- Printf("Tracking: " .. val)
+--- ```
+---@param handle MAHandle The object handle
+---@param propertyName string Name of a valid property on this object
+---@param roleInt? integer Optional role integer. When supplied, booleans return as "No"/"Yes"
+---@return string value The property value as a string
+function Get(handle, propertyName, roleInt) end
+
+--------------------------------------------------------------------------------
+-- GetChildClass
+--------------------------------------------------------------------------------
+
+--- Returns the class name of this object's children.
+---
+--- Example:
+--- ```lua
+--- Printf("Child class: " .. SelectedSequence():GetChildClass())
+--- ```
+---@return string className Class name of the child objects
+function MAHandle:GetChildClass() end
+
+--- Returns the class name of the given handle's children.
+---
+--- Example:
+--- ```lua
+--- Printf("Child class: " .. GetChildClass(SelectedSequence()))
+--- ```
+---@param handle MAHandle The object handle
+---@return string className Class name of the child objects
+function GetChildClass(handle) end
+
+--------------------------------------------------------------------------------
+-- GetClass
+--------------------------------------------------------------------------------
+
+--- Returns the class name of this object.
+---
+--- Example:
+--- ```lua
+--- Printf("Class: " .. SelectedSequence():GetClass())
+--- ```
+---@return string className The class name of this object
+function MAHandle:GetClass() end
+
+--- Returns the class name of the given handle's object.
+---
+--- Example:
+--- ```lua
+--- Printf("Class: " .. GetClass(SelectedSequence()))
+--- ```
+---@param handle MAHandle The object handle
+---@return string className The class name of the object
+function GetClass(handle) end
+
+--------------------------------------------------------------------------------
+-- GetDependencies
+--------------------------------------------------------------------------------
+
+--- Returns a table of handles for all objects this object depends on.
+--- Returns nil if there are no dependencies.
+---
+--- Example:
+--- ```lua
+--- local deps = SelectedSequence():GetDependencies()
+--- if deps ~= nil then
+---     Printf("======= START =======")
+---     deps[1]:Dump()
+---     Printf("======== END ========")
+--- else
+---     Printf("No dependencies found")
+--- end
+--- ```
+---@return MAHandle[]|nil dependencies Table of dependency handles, or nil if none
+function MAHandle:GetDependencies() end
+
+--- Returns a table of handles for all objects the given handle depends on.
+---
+--- Example:
+--- ```lua
+--- local deps = GetDependencies(SelectedSequence())
+--- ```
+---@param handle MAHandle The object handle
+---@return MAHandle[]|nil dependencies Table of dependency handles, or nil if none
+function GetDependencies(handle) end
+
+--------------------------------------------------------------------------------
+-- GetReferences
+--------------------------------------------------------------------------------
+
+--- Returns a table of handles for all objects that reference this object.
+--- Returns nil if nothing references this object.
+---
+--- Example:
+--- ```lua
+--- local refs = SelectedSequence():GetReferences()
+--- if refs ~= nil then
+---     refs[1]:Dump()
+--- else
+---     Printf("No references found")
+--- end
+--- ```
+---@return MAHandle[]|nil references Table of referencing object handles, or nil if none
+function MAHandle:GetReferences() end
+
+--- Returns a table of handles for all objects that reference the given handle.
+---
+--- Example:
+--- ```lua
+--- local refs = GetReferences(SelectedSequence())
+--- ```
+---@param handle MAHandle The object handle
+---@return MAHandle[]|nil references Table of referencing object handles, or nil if none
+function GetReferences(handle) end
+
+--------------------------------------------------------------------------------
+-- GetFader
+--------------------------------------------------------------------------------
+
+--- Returns a float indicating the fader position for this object.
+--- Use the token field to specify which fader to read. Defaults to FaderMaster.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- local master = seq:GetFader({})                        -- FaderMaster (default)
+--- local rate   = seq:GetFader({token = "FaderRate"})
+--- Printf("Master: " .. master .. "  Rate: " .. rate)
+--- ```
+---@param options FaderOptions Table with optional token and index fields
+---@return number value Fader position as a float
+function MAHandle:GetFader(options) end
+
+--- Returns a float indicating the fader position for the given handle.
+---
+--- Example:
+--- ```lua
+--- local val = GetFader(SelectedSequence(), {token = "FaderRate"})
+--- ```
+---@param handle MAHandle The object handle
+---@param options FaderOptions Table with optional token and index fields
+---@return number value Fader position as a float
+function GetFader(handle, options) end
+
+--------------------------------------------------------------------------------
+-- GetFaderText
+--------------------------------------------------------------------------------
+
+--- Returns a text string representation of the fader value for this object.
+--- Use the token field to specify which fader to read. Defaults to FaderMaster.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- local masterText = seq:GetFaderText({})
+--- local rateText   = seq:GetFaderText({token = "FaderRate"})
+--- Printf("Master: " .. tostring(masterText))
+--- Printf("Rate: "   .. tostring(rateText))
+--- ```
+---@param options FaderOptions Table with optional token and index fields
+---@return string value Fader value as a display text string
+function MAHandle:GetFaderText(options) end
+
+--- Returns a text string representation of the fader value for the given handle.
+---
+--- Example:
+--- ```lua
+--- local text = GetFaderText(SelectedSequence(), {token = "FaderRate"})
+--- ```
+---@param handle MAHandle The object handle
+---@param options FaderOptions Table with optional token and index fields
+---@return string value Fader value as a display text string
+function GetFaderText(handle, options) end
+
+--------------------------------------------------------------------------------
+-- GetUIEditor
+--------------------------------------------------------------------------------
+
+--- Returns the name of the UI editor associated with this object.
+--- Returns nil if the object has no editor.
+---
+--- Example:
+--- ```lua
+--- local editor = SelectedSequence():GetUIEditor()
+--- if editor then Printf("Editor: " .. editor) end
+--- ```
+---@return string|nil editorName Name of the UI editor, or nil if none
+function MAHandle:GetUIEditor() end
+
+--- Returns the name of the UI editor associated with the given handle.
+---
+--- Example:
+--- ```lua
+--- local editor = GetUIEditor(SelectedSequence())
+--- ```
+---@param handle MAHandle The object handle
+---@return string|nil editorName Name of the UI editor, or nil if none
+function GetUIEditor(handle) end
+
+--------------------------------------------------------------------------------
+-- GetUISettings
+--------------------------------------------------------------------------------
+
+--- Returns the name of the UI settings associated with this object.
+--- Returns nil if the object has no settings.
+---
+--- Example:
+--- ```lua
+--- local settings = SelectedSequence():GetUISettings()
+--- if settings then Printf("Settings: " .. settings) end
+--- ```
+---@return string|nil settingsName Name of the UI settings, or nil if none
+function MAHandle:GetUISettings() end
+
+--- Returns the name of the UI settings associated with the given handle.
+---
+--- Example:
+--- ```lua
+--- local settings = GetUISettings(SelectedSequence())
+--- ```
+---@param handle MAHandle The object handle
+---@return string|nil settingsName Name of the UI settings, or nil if none
+function GetUISettings(handle) end
+
+--------------------------------------------------------------------------------
+-- HasActivePlayback
+--------------------------------------------------------------------------------
+
+--- Returns true if this object has an active playback, for instance if a sequence has a running cue.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- if seq:HasActivePlayback() then
+---     Printf("'" .. seq.Name .. "' has active playback")
+--- else
+---     Printf("'" .. seq.Name .. "' has no active playback")
+--- end
+--- ```
+---@return boolean active True if there is active playback, false if not
+function MAHandle:HasActivePlayback() end
+
+--- Returns true if the given handle has an active playback.
+---
+--- Example:
+--- ```lua
+--- if HasActivePlayback(SelectedSequence()) then Printf("Playing") end
+--- ```
+---@param handle MAHandle The object handle
+---@return boolean active True if there is active playback, false if not
+function HasActivePlayback(handle) end
+
+--------------------------------------------------------------------------------
+-- Import
+--------------------------------------------------------------------------------
+
+--- Imports an XML file and merges its content into this object.
+--- The file must already exist. Merges without any confirmation pop-up.
+--- Correlates with the Export() object function.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- if seq then
+---     local path = GetPath(Enums.PathType.UserSequences)
+---     local success = seq:Import(path, "mySequence.xml")
+---     if success then
+---         Printf("Imported from: " .. path .. GetPathSeparator() .. "mySequence.xml")
 ---     end
 --- end
 --- ```
----@return {}
-function MAHandle:Children(handle) end
+---@param path string File system path to the folder containing the file
+---@param fileName string Name of the file to import including extension e.g. "mySequence.xml"
+---@return boolean success True if the import succeeded
+function MAHandle:Import(path, fileName) end
 
----@return integer
-function MAHandle:Count() end
+--- Imports an XML file and merges its content into the given handle's object.
+--- The file must already exist. Merges without any confirmation pop-up.
+---
+--- Example:
+--- ```lua
+--- local success = Import(SelectedSequence(), GetPath(Enums.PathType.UserSequences), "seq.xml")
+--- ```
+---@param handle MAHandle The target object handle to import into
+---@param path string File system path to the folder containing the file
+---@param fileName string Name of the file to import including extension
+---@return boolean success True if the import succeeded
+function Import(handle, path, fileName) end
 
----@param handle MAHandle
----@return integer
-function Count(handle) end
+--------------------------------------------------------------------------------
+-- Ptr
+--------------------------------------------------------------------------------
 
-function MAHandle:Dump() end
-
----@param handle MAHandle
-function Dump(handle) end
-
----@param path string
----@param fileName string
----@return boolean
-function MAHandle:Export(path, fileName) end
-
----@param handle MAHandle
----@param path string
----@param fileName string
----@return boolean
-function Export(handle, path, fileName) end
-
----@param propertyName string
----@param roleInt? integer
----@return string
-function MAHandle:Get(propertyName, roleInt) end
-
----@param handle MAHandle
----@param propertyName string
----@param roleInt? integer
----@return string
-function Get(handle, propertyName, roleInt) end
-
----@return string
-function MAHandle:GetChildClass() end
-
----@param handle MAHandle
----@return string
-function GetChildClass(handle) end
-
----@return string
-function MAHandle:GetClass() end
-
----@param handle MAHandle
----@return string
-function GetClass(handle) end
-
----@return {}
-function MAHandle:GetDependencies() end
-
----@param handle MAHandle
----@return {}
-function GetDependencies(handle) end
-
----@return {}
-function MAHandle:GetReferences() end
-
----@param handle MAHandle
----@return {}
-function GetReferences(handle) end
-
----@param tokenIndexTable FaderOptions
----@return number
-function MAHandle:GetFader(tokenIndexTable) end
-
----@param handle MAHandle
----@param tokenIndexTable FaderOptions
----@return number
-function GetFader(handle, tokenIndexTable) end
-
----@param tokenIndexTable FaderOptions
----@return string
-function MAHandle:GetFaderText(tokenIndexTable) end
-
----@param handle MAHandle
----@param tokenIndexTable FaderOptions
----@return string
-function GetFaderText(handle, tokenIndexTable) end
-
----@return string
-function MAHandle:GetUIEditor() end
-
----@param handle MAHandle
----@return string
-function GetUIEditor(handle) end
-
----@return string
-function MAHandle:GetUISettings() end
-
----@param handle MAHandle
----@return string
-function GetUISettings(handle) end
-
----@return boolean
-function MAHandle:HasActivePlayback() end
-
----@param handle MAHandle
----@return boolean
-function HasActivePlayback(handle) end
-
----@param filePath string
----@param fileName string
----@return boolean
-function MAHandle:Import(filePath, fileName) end
-
----@param handle MAHandle
----@param filePath string
----@param fileName string
----@return boolean
-function Import(handle, filePath, fileName) end
-
----@param childIndex integer
----@return MAHandle | nil
+--- Returns a handle to a child object by 1-based index.
+--- Returns nil if no child exists at that index.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- if seq then
+---     local firstCue = seq:Ptr(1)
+---     if firstCue then
+---         firstCue:Dump()
+---     else
+---         ErrPrintf("No child at index 1")
+---     end
+--- end
+--- ```
+---@param childIndex integer 1-based index of the child object
+---@return MAHandle|nil child Handle to the child, or nil if it doesn't exist
 function MAHandle:Ptr(childIndex) end
 
----@param handle MAHandle
----@param childIndex integer
----@return MAHandle | nil
+--- Returns a handle to a child object of the given handle by 1-based index.
+--- Returns nil if no child exists at that index.
+---
+--- Example:
+--- ```lua
+--- local firstCue = Ptr(SelectedSequence(), 1)
+--- ```
+---@param handle MAHandle The parent object handle
+---@param childIndex integer 1-based index of the child object
+---@return MAHandle|nil child Handle to the child, or nil if it doesn't exist
 function Ptr(handle, childIndex) end
 
----@param options SetFaderOptions
+--------------------------------------------------------------------------------
+-- Set
+--------------------------------------------------------------------------------
+
+--- Sets a named property on this object to a new value.
+--- Property names and valid values depend on the object type.
+--- Use Get() or Dump() to discover available properties.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- seq:Set("Tracking", "No")
+--- ```
+---@param propertyName string Name of the property to set
+---@param value string The new value for the property
+---@param roleInt? integer Optional role integer
+---@return nil
+function MAHandle:Set(propertyName, value, roleInt) end
+
+--- Sets a named property on the given handle's object to a new value.
+---
+--- Example:
+--- ```lua
+--- Set(SelectedSequence(), "Tracking", "No")
+--- ```
+---@param handle MAHandle The object handle
+---@param propertyName string Name of the property to set
+---@param value string The new value for the property
+---@param roleInt? integer Optional role integer
+---@return nil
+function Set(handle, propertyName, value, roleInt) end
+
+--------------------------------------------------------------------------------
+-- SetFader
+--------------------------------------------------------------------------------
+
+--- Sets a fader on this object to a specified level (0-100).
+--- The value field is required. Token defaults to FaderMaster if omitted.
+--- Use faderEnabled to toggle faders that can be enabled or disabled.
+---
+--- Example:
+--- ```lua
+--- local seq = SelectedSequence()
+--- seq:SetFader({value = 100.0})                              -- set Master to 100%
+--- seq:SetFader({value = 50.0, faderEnabled = true, token = "FaderTime"})  -- enable and set Time fader
+--- ```
+---@param options SetFaderOptions Table with value (required), token (optional), faderEnabled (optional)
+---@return nil
 function MAHandle:SetFader(options) end
 
----@param handle MAHandle
----@param options SetFaderOptions
+--- Sets a fader on the given handle's object to a specified level (0-100).
+---
+--- Example:
+--- ```lua
+--- SetFader(SelectedSequence(), {value = 100.0})
+--- ```
+---@param handle MAHandle The object handle
+---@param options SetFaderOptions Table with value (required), token (optional), faderEnabled (optional)
+---@return nil
 function SetFader(handle, options) end
 
----@param returnNameOrType boolean
----@return string
-function MAHandle:ToAddr(returnNameOrType) end
+--------------------------------------------------------------------------------
+-- ToAddr
+--------------------------------------------------------------------------------
 
----@param handle MAHandle
----@param returnNameOrType boolean
----@return string
-function ToAddr(handle, returnNameOrType) end
+--- Converts this handle to a named address string.
+--- Returns the address using object names rather than index numbers.
+--- See Addr() for the numbered index version.
+---
+--- Example:
+--- ```lua
+--- local cueObject = ObjectList("Sequence 1 Cue 100")[1]
+--- Printf("ToAddr: " .. cueObject:ToAddr())
+--- ```
+---@param useIndex? boolean If true, uses index format instead of name format
+---@return string address Named address string
+function MAHandle:ToAddr(useIndex) end
+
+--- Converts the given handle to a named address string.
+---
+--- Example:
+--- ```lua
+--- Printf(ToAddr(SelectedSequence()))
+--- ```
+---@param handle MAHandle The handle to convert
+---@param useIndex? boolean If true, uses index format instead of name format
+---@return string address Named address string
+function ToAddr(handle, useIndex) end
