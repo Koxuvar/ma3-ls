@@ -1,0 +1,145 @@
+---@meta
+---  Many functions require a handle as an argument or return a handle.
+
+--- The handle is a custom data type called =="light_userdata"==.
+---
+--- The handle is a unique identifier that refers to a grandMA3 object, for instance, a specific sequence, cue, preset, or fixture.
+---
+--- The object the handle refers to has some properties. Some can be changed, and some are read-only. The object might also have child objects. The object always has Name, Class, and Path information.
+---
+--- The path is the same as an address that identifies where the object exists in the structure of the showfile.
+---@class MAHandle
+---@field Name string
+---@field Class string
+---@field Path string
+MAHandle = {}
+
+--- The Addr Lua object function converts a handle to an address string that can be used in commands.
+--- # Arguments
+--- **Handle:**
+---     The function takes a handle of the type "light_userdata" as an argument. This is the handle to the object where the address is requested.
+---     It can be omitted when using the colon notation on an object.
+--- **baseHandle**
+---     The returned address is from the root as a default. This optional handle can specify a different base location. It must still be a base location in the address path from the root to the object.
+--- **useToAddrIndex**
+---     This can be useful if there is a difference between the ==ToAddr()== and ==Addr()==. Setting this to "true" uses the index number from the ToAddr() instead of the Addr() index number.
+--- **fixResolution**
+---      In some edge cases, the cue address is not resolved correctly. Setting this boolean to true will fix this.
+---
+--- # Return
+--- **String:**
+---      Text string with the address in a parent-child number format separated by dots.
+---
+--- # Example
+---     This example prints different versions of the address to a cue in a sequence.
+---
+--- ```lua
+--- return function()
+---     -- Creates a cue in sequence 1
+---     Cmd("Store Sequence 1 Cue 100 /Merge /NoConfirmation")
+---     --Store a handle to the created cue
+---     local cueObject = ObjectList("Sequence 1 Cue 100")[1]
+---     --Print different version of the handle address
+---     Printf("ToAddr:              " .. cueObject:ToAddr())
+---     Printf("Addr:                " .. cueObject:Addr())
+---     Printf("Addr(Parent, false, false): " .. cueObject:Addr(cueObject:Parent(), false, false))
+---     Printf("Addr(Parent, true, false):  " .. cueObject:Addr(cueObject:Parent(), true, false))
+---     Printf("Addr(Parent, false, true): " .. cueObject:Addr(cueObject:Parent(), false, true))
+---     Printf("Addr(Parent, true, true):  " .. cueObject:Addr(cueObject:Parent(), true, true))
+--- end
+--- ```
+---
+---@param handle MAHandle
+---@param baseHandle? MAHandle
+---@param useToAddrIndex? boolean
+---@param fixResolution? boolean
+---@return string
+function MAHandle:Addr(handle, baseHandle, useToAddrIndex, fixResolution) end
+
+--- The AddrNative Lua object function converts a handle to an address string that can be used in commands.
+--- # Arguments
+--- **Handle:**
+---     The function takes a handle as an argument. This is the handle to the object where the address is requested.
+---     It can be omitted when using the colon notation on an object.
+--- **baseHandle**
+---     The returned address is from the root as a default. This optional handle can specify a different base location. It still needs to be a base location in the address path from the root to the object.
+--- **withQuotes**
+---     Set this to "true" to get the returned names in quotation marks.
+---
+--- # Return
+--- **String:**
+---      Text string with the address in a parent-child name format separated by dots.
+---
+--- # Example
+---      This example prints the address of the first sequence:
+--- ```lua
+--- return function()
+---     -- Stores the handle to the first sequence.
+---     local mySequence = DataPool().Sequences[1]
+---     -- Print the native address.
+---     Printf("The full address is: " .. mySequence:AddrNative())
+---     -- Stores a handle to the default DataPool.
+---     local myDataPool = DataPool()
+---     -- Print the native address to the datapool using the default datapool as a base.
+---     Printf("The address in the datapool is: " .. mySequence:AddrNative(myDataPool))
+---     -- Print the native address to the datapool, using the default datapool as a base, with names as strings.
+---     Printf("The address in the datapool with quotes around the names is: " .. mySequence:AddrNative(myDataPool, true))
+--- end
+--- ```
+---@param handle MAHandle
+---@param baseHandle? MAHandle
+---@param withQuotes? boolean
+---@return string
+function MAHandle:AddrNative(handle, baseHandle, withQuotes) end
+
+--- The ==FromAddr== Lua function converts a numbered string address into a handle that can be used in commands.
+---
+--- # Arguments
+--- **handleString**
+---      A text string identifying an object. It can be a numbered or named address.
+--- **handle(optional)**
+---     The default is to write the address from the root location. This optional handle can specify a different base location. It still needs to be a base location in the address path from the root to the object.
+---
+--- # Return
+--- **Handle:**
+---      The handle for the addressed object.
+---
+--- # Example
+--- This example prints the address of the first sequence:
+--- ```lua
+---return function()
+---     -- Converts the string to a handle and store in a variabel.
+---     local mySequenceHandle = FromAddr("14.14.1.6.1")
+---     -- Converts the handle back to a numbered string and prints it.
+---     Printf("The address is: " ..mySequenceHandle:Addr())
+---     -- Converts the handle to a named string and prints it.
+---     Printf("The address is: " ..mySequenceHandle:AddrNative())
+---
+---     -- Store the handle of the selected datapool.
+---     local myDataPool = DataPool()
+---     -- Prints the address of the selected datapool.
+---     Printf("The datapool address is: " ..myDataPool:Addr())
+---
+---     --- The follwoing example uses the name of a sequence in the sequence pool.
+---     --- Please adjust the "Default" name in the next line to match an existing named sequence.
+---     -- Finds the address based on the base location and a text string with names.
+---     local alsoMySequenceHandle = FromAddr("Sequences.Default", myDataPool)
+---     -- Converts the handle back to a numbered string and prints it.
+---     Printf("The address is: " ..alsoMySequenceHandle:Addr())
+---     -- Converts the handle to a named string and prints it.
+---     Printf("The address is: " ..alsoMySequenceHandle:AddrNative())
+--- end
+--- ```
+---@param handleString string
+---@param handle? MAHandle
+---@return MAHandle
+function MAHandle:FromAddr(handleString, handle) end
+
+---@return string
+function MAHandle:HandleToStr() end
+
+---@return integer
+function MAHandle:HandleToInt() end
+
+---@return string
+function MAHandle:ToAddr() end
