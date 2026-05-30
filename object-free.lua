@@ -3,89 +3,7 @@
 -- grandMA3 Object-Free Lua API
 -- Complete stub file generated from grandMA3 User Manual v2.3 and official API dump.
 -- grandMA3 injects all these functions as bare globals into the Lua environment.
-
---------------------------------------------------------------------------------
--- Shared types
---------------------------------------------------------------------------------
-
----@alias SampleKey
----| "MEMORY"   # RAM usage percentage
----| "CPU"      # CPU usage percentage
----| "CPUTEMP"  # CPU temperature percentage
----| "GPUTEMP"  # GPU temperature percentage
----| "SYSTEMP"  # System temperature percentage
----| "FANRPM"   # Fan RPM percentage
-
----@alias ShowFileStatus
----| "NoShow"
----| "ShowLoaded"
----| "ShowDownloaded"
----| "ShowSaving"
----| "DataNegotiationActive"
-
----@class AddFixturesTable
----@field mode MAHandle Handle to a valid dmx_mode defining the fixture type and mode
----@field amount integer Number of fixtures to add
----@field name? string Name of the first fixture
----@field fid? string Fixture ID string
----@field cid? string Channel ID — only valid if idtype is not "Fixture"
----@field idtype? string ID type name, only needed if different from "Fixture"
----@field patch? string[] Up to 8 patch address strings in "universe.address" format e.g. "10.001"
----@field layer? string Layer name
----@field class? string Class name
----@field parent? MAHandle Handle of parent fixture, only needed for sub-fixtures
----@field insert_index? integer Insert index position
----@field undo? string Text label for the undo entry
-
----@class BuildDetailsTable
----@field GitDate string Date of the repository branch
----@field GitHead string Branch name of the repository
----@field GitHash string Hash of the repository commit
----@field CompileDate string Date the software was compiled
----@field CompileTime string Time the software was compiled
----@field BigVersion string Full software version string
----@field SmallVersion string Small version number
-
----@class ObjectListOptions
----@field reverse_order? boolean If true, returns the list in reverse order
----@field selected_as_default? boolean If true, returns only the selected object when no other match
-
----@class DirListEntry
----@field name string File name
----@field size integer File size in bytes
----@field time integer File timestamp
-
----@class PositionTable
----@field x integer X position on the display
----@field y integer Y position on the display
-
----@class GetRTChannelResult
----@field fixture MAHandle Handle to the fixture
----@field subfixture MAHandle Handle to the subfixture
----@field dmx_channel MAHandle Handle to the DMX channel
-
----@class PhaserStep
----@field channel_function? integer Channel function index
----@field absolute? number Absolute value as percent
----@field absolute_value? integer Absolute value as raw integer
----@field relative? number Relative value as percent
----@field accel? number Acceleration as percent
----@field accel_type? integer Spline type enum (Enums.SplineType)
----@field decel? number Deceleration as percent
----@field decel_type? integer Spline type enum (Enums.SplineType)
----@field trans? number Transition as percent
----@field width? number Width as percent
----@field integrated? MAHandle Integrated preset handle
-
----@class PhaserData : PhaserStep
----@field abs_preset? MAHandle Absolute preset handle
----@field rel_preset? MAHandle Relative preset handle
----@field fade? number Fade time in seconds
----@field delay? number Delay time in seconds
----@field speed? number Speed in Hz
----@field phase? number Phase in degrees
----@field measure? number Measure as percent
----@field gridpos? integer Grid position
+-- Types are defined in types.lua.
 
 --------------------------------------------------------------------------------
 -- Output / Printing
@@ -755,7 +673,7 @@ function HandleToStr(handle) end
 function IsObjectValid(handle) end
 
 --------------------------------------------------------------------------------
--- File / Export / Import
+-- File / Export / Import (object-free versions)
 --------------------------------------------------------------------------------
 
 --- Exports a Lua table to an XML file.
@@ -844,7 +762,7 @@ function GetPathType(handle, contentType) end
 ---@return string path The resolved path string
 function GetPathOverrideFor(nameOrIndex, basePath, createIfMissing) end
 
---- Returns the path separator character for the current OS. "/" on Linux/Mac, "\" on Windows.
+--- Returns the path separator character for the current OS.
 ---@return string separator Single character path separator
 function GetPathSeparator() end
 
@@ -932,8 +850,7 @@ function IncProgress(progressIndex, delta) end
 -- Undo
 --------------------------------------------------------------------------------
 
---- Creates a new undo group. All operations using the returned handle are grouped.
---- Must be closed with CloseUndo() when done.
+--- Creates a new undo group. Must be closed with CloseUndo() when done.
 ---
 --- Example:
 --- ```lua
@@ -978,11 +895,6 @@ function PluginVars(pluginName) end
 function AddonVars(addonName) end
 
 --- Sets a variable in a variable set. Creates it if it doesn't exist.
----
---- Example:
---- ```lua
---- SetVar(UserVars(), "myVar", 42)
---- ```
 ---@param varSetHandle MAHandle Handle to the variable set
 ---@param varName string Name of the variable
 ---@param value any The value to set
@@ -1040,7 +952,7 @@ function GetApiDescriptor() end
 function GetObjApiDescriptor() end
 
 --------------------------------------------------------------------------------
--- Text screen / Debug
+-- Debug / Text screen
 --------------------------------------------------------------------------------
 
 --- Returns the internal line number of the current text screen position.
@@ -1133,7 +1045,7 @@ function Mouse(displayIndex, eventType, buttonOrX, y) end
 function Touch(displayIndex, eventType, touchId, x, y) end
 
 --------------------------------------------------------------------------------
--- Library
+-- Library refresh
 --------------------------------------------------------------------------------
 
 --- Refreshes the library for the given handle, reloading any cached data.
@@ -1210,7 +1122,7 @@ function GetTopModal() end
 ---@return MAHandle|nil handle Handle to the top overlay, or nil if none
 function GetTopOverlay(displayIndex) end
 
---- Waits for a modal overlay to appear, blocking until it does or the timeout expires.
+--- Waits for a modal overlay to appear, blocking until it does or timeout.
 ---@param timeout? number Seconds to wait
 ---@return MAHandle|nil handle Handle to the modal overlay, or nil on timeout
 function WaitModal(timeout) end

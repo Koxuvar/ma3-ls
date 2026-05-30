@@ -5,6 +5,7 @@
 -- All functions exist in two forms:
 --   object:Method()       -- colon notation, handle is implicit self
 --   Method(handle, ...)   -- standard notation, handle passed explicitly
+-- Types are defined in types.lua.
 
 ---@class MAHandle
 local MAHandle = {}
@@ -20,7 +21,7 @@ local MAHandle = {}
 --- ```lua
 --- local cueObject = ObjectList("Sequence 1 Cue 100")[1]
 --- Printf("Addr: " .. cueObject:Addr())
---- Printf("Addr(Parent, false, false): " .. cueObject:Addr(cueObject:Parent(), false, false))
+--- Printf("Addr(Parent): " .. cueObject:Addr(cueObject:Parent(), false, false))
 --- ```
 ---@param baseHandle? MAHandle Optional base location handle. Defaults to root.
 ---@param forceParentBased? boolean If true, forces parent-based address calculation
@@ -180,7 +181,7 @@ function MAHandle:HasParent(objectHandle) end
 ---@return nil
 function HasParent(handle, objectHandle) end
 
---- Returns the handle to the object assigned to this object (e.g. an assigned preset).
+--- Returns the handle to the object assigned to this object.
 ---@return MAHandle|nil assigned Handle to the assigned object, or nil
 function MAHandle:GetAssignedObj() end
 
@@ -308,7 +309,7 @@ function GetLineAt(handle, lineNumber) end
 ---
 --- Example:
 --- ```lua
---- local tracking = SelectedSequence():Get("Tracking", Enums.Roles.Edit) -- "No" or "Yes"
+--- local tracking = SelectedSequence():Get("Tracking", Enums.Roles.Edit)
 --- ```
 ---@param propertyName string Name of a valid property on this object
 ---@param roleInt? integer Optional role integer. When supplied, booleans return as "No"/"Yes"
@@ -697,8 +698,8 @@ function MAHandle:Export(path, fileName) end
 ---@return boolean success
 function Export(handle, path, fileName) end
 
---- Imports an XML file and merges its content into this object.
---- The file must already exist. Merges without any confirmation pop-up.
+--- Imports an XML file and merges its content into this object without confirmation.
+--- The file must already exist.
 ---
 --- Example:
 --- ```lua
@@ -743,28 +744,6 @@ function Save(handle, path, fileName) end
 --------------------------------------------------------------------------------
 -- Fader control
 --------------------------------------------------------------------------------
-
----@alias FaderToken
----| "FaderMaster"
----| "FaderX"
----| "FaderXA"
----| "FaderXB"
----| "FaderTemp"
----| "FaderRate"
----| "FaderSpeed"
----| "FaderHighlight"
----| "FaderLowlight"
----| "FaderSolo"
----| "FaderTime"
-
----@class FaderOptions
----@field token? FaderToken Which fader to query (default: FaderMaster)
----@field index? integer Optional fader index
-
----@class SetFaderOptions
----@field value? number Fader value to set (0-100)
----@field token? FaderToken Which fader to target (default: FaderMaster)
----@field faderEnabled? boolean Enable or disable the fader
 
 --- Returns a float indicating the fader position for this object (0-100).
 ---
@@ -859,7 +838,6 @@ function CommandCreateDefaults(handle) end
 
 --------------------------------------------------------------------------------
 -- Input UI functions
--- Used on input UI elements (text fields, etc.)
 --------------------------------------------------------------------------------
 
 --- Sets the title of an input UI element.
