@@ -1,20 +1,36 @@
-# grandMA3 Lua API Definitions
+# grandMA3 Lua Definitions
 
-LuaLS type definitions for the grandMA3 Lua plugin API. Provides completions, hover documentation, signature hints, and type checking for both the Object-Free and Object APIs — in Neovim, VS Code, or any editor running the [Lua Language Server](https://github.com/LuaLS/lua-language-server).
+Do you write Lua plugins for grandMA3? 
 
-## What's included
+Do you hate that the second you open a code editor you're flying completely blind, no completions, no hints, no idea what `ObjectList` actually takes as arguments without alt-tabbing to the manual every five seconds?
 
-- **`types.lua`** — Core types: `MAHandle`, fader tokens, and all shared table types
-- **`object_free.lua`** — All 136 object-free functions (`Cmd`, `Printf`, `ObjectList`, etc.)
-- **`object_api.lua`** — All 20 object methods callable on `MAHandle` (`Addr`, `Children`, `SetFader`, etc.)
+Yeah, me too. So I fixed it.(maybe used claude to write the docs cuz that sucks.)
 
-Based on the grandMA3 User Manual v2.3.
+A set of [LuaLS](https://github.com/LuaLS/lua-language-server) type definition stubs for the grandMA3 Lua API. Drop it in your editor config and get completions, hover docs, and signature hints without touching the console.
+
+---
+
+## What's in the box
+
+- **`types.lua`** - All shared types: `MAHandle`, fader tokens, phaser data, grid/list types, everything
+- **`object_free.lua`** - All 136+ object-free globals (`Cmd`, `Printf`, `ObjectList`, `SelectedSequence`, etc.)
+- **`object_api.lua`** - All methods callable on `MAHandle` (`Addr`, `Children`, `SetFader`, `Create`, etc.)
+- **`list_api.lua`** - List UI functions (`AddListStringItem`, `GetListItemName`, etc.)
+- **`grid_api.lua`** - Grid UI functions (`GridGetSelectedCells`, `GridScrollCellIntoView`, etc.)
+- **`ui_api.lua`** - UI/Overlay/Scroll functions (`WaitInit`, `ScrollDo`, `UIChildren`, etc.)
+
+Generated from the grandMA3 User Manual v2.3 and the official API dump from the console.
+You can check that out for yourself if you want with the keyword ==Help Lua==. It puts a text file in the library folder somewhere only god knows on your drive or pc or something.
+
+
+---
 
 ## Setup
 
-### Neovim
+<details>
+<summary><strong>Neovim</strong></summary>
 
-Add the path to this repo to your `lua_ls` workspace library. In your LSP config:
+Add the path to this repo to your `lua_ls` workspace library. Make sure it goes in your `on_init` block, not just `settings`, or it'll get overwritten:
 
 ```lua
 require('lspconfig').lua_ls.setup({
@@ -33,7 +49,10 @@ require('lspconfig').lua_ls.setup({
 })
 ```
 
-### VS Code
+</details>
+
+<details>
+<summary><strong>VS Code</strong></summary>
 
 Install the [Lua extension by sumneko](https://marketplace.visualstudio.com/items?itemName=sumneko.lua), then add to your `settings.json`:
 
@@ -45,32 +64,58 @@ Install the [Lua extension by sumneko](https://marketplace.visualstudio.com/item
 }
 ```
 
+Paths need to be absolute.
+
+</details>
+
+<details>
+<summary><strong>Any other editor running LuaLS</strong></summary>
+
+Find wherever you configure `workspace.library` and add the absolute path to this repo. Works the same way regardless of editor.
+
+</details>
+
+To be honest if your thing aint above, it probably still works, just ask like claude or gpt how to install a lua_ls add on.
+
+---
+
 ## Usage
 
-Once configured, you get completions and hover docs on all MA3 globals:
-
 ```lua
--- Completions and signature hints on object-free functions
+-- completions and signature hints on all object-free globals
 local result = Cmd("Go+ Sequence 1")
 local cues = ObjectList("Sequence 1 Cue 1 Thru 10")
 
--- Full method completions on handles
+-- full method completions on any handle
 local seq = SelectedSequence()
 seq:SetFader({ value = 100.0, token = "FaderMaster" })
-local addr = seq:Addr()
+Printf("Address: " .. seq:Addr())
+Printf("Cue count: " .. seq:Count())
 
--- Type-cast for variables that come from light_userdata at runtime
+-- hover over anything you're not sure about
+local cue = seq:Ptr(1)
+```
+
+If you have a variable that'll hold a handle at runtime but LuaLS can't infer it statically, cast it:
+
+```lua
 ---@type MAHandle
 local handle = {}
-handle:Children()
+handle:Children()  -- completions work now
 ```
+
+---
 
 ## Notes
 
-- grandMA3 does not expose a runtime Lua environment for external tooling — this is a static API definition only. There is no dynamic show-file awareness.
-- `MAHandle` represents the `light_userdata` type used throughout the MA3 API. All object methods are available on any handle regardless of what object it points to — MA3 does not expose distinct classes per object type.
-- The `---@type MAHandle` cast shown above is useful when you need completions on a variable that will hold a handle at runtime but can't be typed statically.
+MALighting doesn't expose a runtime Lua environment to external tools, so this is static only. No show-file awareness in terms of cool stuff like idk what a light is doing, just the API surface.
+
+`MAHandle` is a flat type representing the `light_userdata` that underpins the MA3 object model. MA3 doesn't expose separate classes per object type, so one class covers everything.
+
+Both call styles are stubbed: `handle:Method()` and `Method(handle, ...)`.
+
+---
 
 ## Contributing
 
-If you find missing functions, incorrect signatures, or outdated docs, PRs are welcome. The source of truth is the [grandMA3 User Manual](https://help2.malighting.com/Page/grandMA3/lua_object_free_api/en/).
+If you find a wrong signature, a missing function, or something that changed in a newer version, PRs are welcome. Source of truth is the [grandMA3 User Manual](https://help2.malighting.com/Page/grandMA3/lua_object_free_api/en/) and the API dump you can pull straight from the console with `GetApiDescriptor()` and `GetObjApiDescriptor()`.
