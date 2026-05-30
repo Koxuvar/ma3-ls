@@ -20,7 +20,7 @@ A set of [LuaLS](https://github.com/LuaLS/lua-language-server) type definition s
 - **`ui_api.lua`** - UI/Overlay/Scroll functions (`WaitInit`, `ScrollDo`, `UIChildren`, etc.)
 
 Generated from the grandMA3 User Manual v2.3 and the official API dump from the console.
-You can check that out for yourself if you want with the keyword ==Help Lua==. It puts a text file in the library folder somewhere only god knows on your drive or pc or something.
+You can check that out for yourself if you want with the keyword `HelpLua`. It puts a text file in the library folder somewhere only god knows on your drive or pc or something.
 
 
 ---
